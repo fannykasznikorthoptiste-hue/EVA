@@ -7,8 +7,8 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:'Nunito',system-ui,sans-serif;background:#fff;color:#111;overflow-y:auto}
-#app{display:flex;flex-direction:column;min-height:100vh}
+html,body{height:100%;font-family:'Nunito',system-ui,sans-serif;background:#fff;color:#111;overflow:hidden}
+#app{display:flex;flex-direction:column;height:100vh}
 
 /* ── HEADER ── */
 #header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#fff;border-bottom:1px solid #e8e8e8;flex-shrink:0}
@@ -85,9 +85,10 @@ input[type=range]{flex:1;accent-color:#7c6ef7}
 #next-btn{display:none;margin:6px auto 0;background:#16a34a;color:#fff;font-size:15px;font-weight:900;padding:9px 32px;border:none;border-radius:12px;cursor:pointer;font-family:'Nunito',sans-serif}
 #next-btn:hover{background:#15803d}
 
-/* BACK BTN */
-#back-btn{background:transparent;border:1.5px solid #ccc;color:#888;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif}
-#back-btn:hover{border-color:#999;color:#555}
+/* HOME BTN */
+#home-btn{background:transparent;border:1.5px solid #ddd;color:#888;font-size:18px;padding:4px 10px;border-radius:8px;cursor:pointer;line-height:1;display:none}
+#home-btn:hover{border-color:#999;color:#555}
+#test-counter{font-size:13px;font-weight:700;color:#888;white-space:nowrap}
 
 @media(max-width:500px){
   .vk{width:32px;height:36px;font-size:15px}
@@ -102,8 +103,10 @@ input[type=range]{flex:1;accent-color:#7c6ef7}
 
 <!-- HEADER -->
 <div id="header">
+  <button id="home-btn" onclick="goHome()" title="Retour au menu">🏠</button>
   <h1>👁 Empan visuo-attentionnel</h1>
-  <div style="display:flex;gap:8px">
+  <div style="display:flex;gap:8px;align-items:center">
+    <span id="test-counter"></span>
     <div id="level-badge">Niveau 1</div>
     <div id="score-badge">⭐ 0</div>
   </div>
@@ -137,6 +140,11 @@ input[type=range]{flex:1;accent-color:#7c6ef7}
       <input type="range" id="dur" min="100" max="2000" value="800" step="50" oninput="updateRng('dur')">
       <span class="rng-val" id="dur-val">800</span>
     </div>
+    <div class="cfg-row">
+      <label>Nb de tests</label>
+      <input type="range" id="maxt" min="1" max="20" value="10" step="1" oninput="updateRng('maxt')">
+      <span class="rng-val" id="maxt-val">10</span>
+    </div>
   </div>
 
   <button id="start-btn" onclick="startGame()">▶ Commencer !</button>
@@ -163,8 +171,8 @@ input[type=range]{flex:1;accent-color:#7c6ef7}
 
 <script>
 let stimType='letters';
-let nb=4, dur=800;
-let score=0, level=1, roundsWon=0;
+let nb=4, dur=800, maxTests=10;
+let score=0, level=1, roundsWon=0, testsDone=0;
 let target=[], typed=[], attempts=0, maxAttempts=3;
 let phase='idle';
 
@@ -190,20 +198,39 @@ function updateRng(id){
 function startGame(){
   nb=parseInt(document.getElementById('nb').value);
   dur=parseInt(document.getElementById('dur').value);
-  score=0; level=1; roundsWon=0;
+  maxTests=parseInt(document.getElementById('maxt').value);
+  score=0; level=1; roundsWon=0; testsDone=0;
   updateHeader();
+  document.getElementById('home-btn').style.display='block';
   document.getElementById('config').style.display='none';
   document.getElementById('game').style.display='flex';
   buildVKB();
   nextRound();
 }
 
+function goHome(){
+  document.getElementById('home-btn').style.display='none';
+  document.getElementById('game').style.display='none';
+  document.getElementById('config').style.display='flex';
+  document.getElementById('test-counter').textContent='';
+  phase='idle';
+}
+
 function updateHeader(){
   document.getElementById('score-badge').textContent='⭐ '+score;
   document.getElementById('level-badge').textContent='Niveau '+level;
+  document.getElementById('test-counter').textContent=testsDone+'/'+maxTests;
 }
 
 function nextRound(){
+  if(testsDone>=maxTests){
+    setStatus('🎉 Séance terminée ! Score final : '+score+' pts','ok');
+    document.getElementById('next-btn').style.display='none';
+    phase='idle';
+    return;
+  }
+  testsDone++;
+  updateHeader();
   document.getElementById('next-btn').style.display='none';
   typed=[];
   attempts=0;
