@@ -7,7 +7,8 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:'Nunito',system-ui,sans-serif;background:#fff;color:#111;overflow:hidden}
+html,body{height:100%;font-family:'Nunito',system-ui,sans-serif;background:#fff;color:#111;}
+body{overflow:hidden}
 #app{display:flex;flex-direction:column;height:100vh}
 
 /* ── HEADER ── */
@@ -99,6 +100,58 @@ input[type=range]{width:100%;accent-color:#5AABB0;height:6px}
 #home-btn:hover{border-color:#999;color:#555}
 #test-counter{font-size:13px;font-weight:700;color:#888;white-space:nowrap}
 
+/* ── DEVICE SCREEN ── */
+#device-screen{
+  position:fixed;inset:0;background:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:28px;z-index:200;padding:24px;
+}
+#device-screen img{width:140px;height:140px;object-fit:contain}
+#device-screen h2{font-size:22px;font-weight:900;color:#111;text-align:center;line-height:1.3}
+#device-screen p{font-size:14px;color:#888;text-align:center}
+.device-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.device-btn{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:18px 22px;border-radius:16px;border:2px solid #e0e0e0;
+  background:#f9f9f9;cursor:pointer;font-family:'Nunito',sans-serif;
+  font-size:13px;font-weight:800;color:#555;transition:all .15s;min-width:100px;
+}
+.device-btn span.icon{font-size:36px}
+.device-btn:hover{border-color:#5AABB0;background:#EBF7F8;color:#3D8F95}
+.device-btn.selected{border-color:#5AABB0;background:#5AABB0;color:#fff}
+
+/* ── DEVICE: smartphone ── */
+body.device-phone #hero-logo{width:120px;height:120px}
+body.device-phone #params-card{padding:12px 14px 18px;gap:12px}
+body.device-phone .tog{padding:6px 12px;font-size:12px}
+body.device-phone #start-btn{font-size:16px;padding:12px 36px}
+body.device-phone .vk{width:30px;height:34px;font-size:14px}
+body.device-phone .vk.del-key{width:42px;font-size:11px}
+body.device-phone .vk.val-key{width:54px;font-size:12px}
+body.device-phone .vk.img-key{width:42px;height:42px;font-size:22px}
+body.device-phone .letter-token{font-size:18px}
+body.device-phone .letter-token.img-mode{font-size:26px}
+body.device-phone .typed-char{width:34px;height:40px;font-size:20px}
+body.device-phone #config{overflow-y:auto}
+body.device-phone #countdown{font-size:70px}
+
+/* ── DEVICE: tablette ── */
+body.device-tablet #hero-logo{width:160px;height:160px}
+body.device-tablet #params-card{padding:16px 18px 22px;gap:14px}
+body.device-tablet .tog{padding:7px 14px;font-size:13px}
+body.device-tablet .vk{width:44px;height:44px;font-size:18px}
+body.device-tablet .vk.del-key{width:62px;font-size:13px}
+body.device-tablet .vk.val-key{width:76px;font-size:14px}
+body.device-tablet .vk.img-key{width:56px;height:56px;font-size:28px}
+body.device-tablet .letter-token{font-size:28px}
+body.device-tablet .letter-token.img-mode{font-size:38px}
+body.device-tablet .typed-char{width:48px;height:54px;font-size:30px}
+body.device-tablet #config{overflow-y:auto}
+body.device-tablet #countdown{font-size:110px}
+
+/* ── DEVICE: ordinateur (défaut, déjà dimensionné) ── */
+body.device-desktop #config{overflow-y:auto}
+
 @media(max-width:500px){
   .vk{width:32px;height:36px;font-size:15px}
   .vk.del-key{width:46px;font-size:12px}
@@ -109,6 +162,24 @@ input[type=range]{width:100%;accent-color:#5AABB0;height:6px}
 </head>
 <body>
 <div id="app">
+
+<!-- DEVICE SCREEN -->
+<div id="device-screen">
+  <img id="ds-logo" src="" alt="Logo">
+  <h2>Sur quel appareil<br>utilisez-vous l'application ?</h2>
+  <p>Cela permet d'adapter l'affichage à votre écran.</p>
+  <div class="device-btns">
+    <button class="device-btn" onclick="chooseDevice('desktop')">
+      <span class="icon">🖥️</span>Ordinateur
+    </button>
+    <button class="device-btn" onclick="chooseDevice('tablet')">
+      <span class="icon">📱</span>Tablette
+    </button>
+    <button class="device-btn" onclick="chooseDevice('phone')">
+      <span class="icon">📲</span>Smartphone
+    </button>
+  </div>
+</div>
 
 <!-- HEADER -->
 <div id="header">
@@ -412,7 +483,7 @@ function reshowTarget(cb){
   el.style.left=x+'px';
   el.style.top=y+'px';
   zone.appendChild(el);
-  setTimeout(()=>{zone.querySelectorAll('.letter-token').forEach(e=>e.remove());cb();}, Math.max(dur,1200));
+  setTimeout(()=>{zone.querySelectorAll('.letter-token').forEach(e=>e.remove());cb();}, dur);
 }
 
 function pointsForRound(){
@@ -559,6 +630,32 @@ function flashVK(ch){
   btn.classList.add('pressed');
   setTimeout(()=>btn.classList.remove('pressed'),150);
 }
+
+function chooseDevice(dev){
+  document.getElementById('device-screen').style.display='none';
+  // Remove any previous device class
+  document.body.classList.remove('device-desktop','device-tablet','device-phone');
+  if(dev==='phone') document.body.classList.add('device-phone');
+  else if(dev==='tablet') document.body.classList.add('device-tablet');
+  else document.body.classList.add('device-desktop');
+  // Remember choice for this session
+  try{sessionStorage.setItem('evaDevice',dev);}catch(e){}
+}
+
+// Auto-detect device on load, but still show choice screen
+(function(){
+  // Copy logo src to device screen
+  const logo = document.getElementById('hero-logo');
+  const dsLogo = document.getElementById('ds-logo');
+  if(logo && dsLogo) dsLogo.src = logo.src;
+  // If device was already chosen this session, skip screen
+  try{
+    const saved=sessionStorage.getItem('evaDevice');
+    if(saved){chooseDevice(saved);return;}
+  }catch(e){}
+  // Show device screen
+  document.getElementById('device-screen').style.display='flex';
+})();
 
 updateRng('nb');updateRng('dur');
 </script>
