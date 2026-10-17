@@ -7,9 +7,8 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:'Nunito',system-ui,sans-serif;background:#fff;color:#111;}
-body{overflow:hidden}
-#app{display:flex;flex-direction:column;height:100vh}
+html{height:100%}body{height:100%;font-family:'Nunito',system-ui,sans-serif;background:#fff;color:#111;overflow:hidden}
+#app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
 
 /* ── HEADER ── */
 #header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#fff;border-bottom:1px solid #e8e8e8;flex-shrink:0}
@@ -18,7 +17,7 @@ body{overflow:hidden}
 #level-badge{background:#f0f0f0;color:#555;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px}
 
 /* ── CONFIG PANEL ── */
-#config{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0;padding:0;background:#fff;overflow-y:auto}
+#config{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0;padding:0;background:#fff;overflow-y:scroll;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 
 /* Hero */
 #hero{width:100%;padding:24px 0 8px;display:flex;justify-content:center;flex-shrink:0;background:#fff}
@@ -121,7 +120,11 @@ input[type=range]{width:100%;accent-color:#5AABB0;height:6px}
 .device-btn.selected{border-color:#5AABB0;background:#5AABB0;color:#fff}
 
 /* ── DEVICE: smartphone ── */
-body.device-phone #hero-logo{width:120px;height:120px}
+body.device-phone #hero-logo{width:80px;height:80px}
+body.device-phone #hero{padding:12px 0 4px}
+body.device-phone #header h1{font-size:14px}
+body.device-phone #header{padding:7px 12px}
+body.device-phone .param-label{font-size:11px}
 body.device-phone #params-card{padding:12px 14px 18px;gap:12px}
 body.device-phone .tog{padding:6px 12px;font-size:12px}
 body.device-phone #start-btn{font-size:16px;padding:12px 36px}
@@ -132,7 +135,6 @@ body.device-phone .vk.img-key{width:42px;height:42px;font-size:22px}
 body.device-phone .letter-token{font-size:18px}
 body.device-phone .letter-token.img-mode{font-size:26px}
 body.device-phone .typed-char{width:34px;height:40px;font-size:20px}
-body.device-phone #config{overflow-y:auto}
 body.device-phone #countdown{font-size:70px}
 
 /* ── DEVICE: tablette ── */
@@ -146,11 +148,9 @@ body.device-tablet .vk.img-key{width:56px;height:56px;font-size:28px}
 body.device-tablet .letter-token{font-size:28px}
 body.device-tablet .letter-token.img-mode{font-size:38px}
 body.device-tablet .typed-char{width:48px;height:54px;font-size:30px}
-body.device-tablet #config{overflow-y:auto}
 body.device-tablet #countdown{font-size:110px}
 
 /* ── DEVICE: ordinateur (défaut, déjà dimensionné) ── */
-body.device-desktop #config{overflow-y:auto}
 
 @media(max-width:500px){
   .vk{width:32px;height:36px;font-size:15px}
