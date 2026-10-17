@@ -184,7 +184,6 @@ body.device-tablet #countdown{font-size:110px}
 
 <!-- HEADER -->
 <div id="header">
-  <button id="home-btn" onclick="goHome()" title="Retour au menu">🏠</button>
   <h1>👁 Empan visuo-attentionnel</h1>
   <div style="display:flex;gap:8px;align-items:center">
     <span id="test-counter"></span>
@@ -251,8 +250,8 @@ body.device-tablet #countdown{font-size:110px}
     <div id="flash"></div>
     <div id="countdown" style="display:none"></div>
   </div>
-  <div id="timer-bar" style="text-align:center;padding:4px 16px;background:#EBF7F8;border-top:1px solid #C8E9EB;font-size:14px;font-weight:900;color:#3D8F95;font-family:monospace;min-height:26px"></div>
   <div id="status-bar">
+    <button id="home-btn" onclick="goHome()" title="Retour au menu" style="display:none">🏠</button>
     <span id="status-msg" class="info">Prêt…</span>
     <div id="attempt-dots"></div>
     <button id="next-btn" onclick="nextRound()">Suivant ▶</button>
@@ -387,11 +386,7 @@ function showStimuli(){
   el.style.left=x+'px';
   el.style.top=y+'px';
   zone.appendChild(el);
-  const _t0=performance.now();
   setTimeout(()=>{
-    const _ms=Math.round(performance.now()-_t0);
-    const _tb=document.getElementById('timer-bar');
-    if(_tb) _tb.textContent='⏱ Flash mesuré : '+_ms+' ms';
     zone.querySelectorAll('.letter-token').forEach(e=>e.remove());
     phase='input';
     typed=[];
@@ -487,11 +482,7 @@ function reshowTarget(cb){
   el.style.left=x+'px';
   el.style.top=y+'px';
   zone.appendChild(el);
-  const _r0=performance.now();
   setTimeout(()=>{
-    const _rms=Math.round(performance.now()-_r0);
-    const _tb=document.getElementById('timer-bar');
-    if(_tb) _tb.textContent='⏱ Flash mesuré : '+_rms+' ms';
     zone.querySelectorAll('.letter-token').forEach(e=>e.remove());
     cb();
   }, dur);
