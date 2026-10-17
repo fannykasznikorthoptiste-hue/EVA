@@ -7,17 +7,17 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-html{height:100%}body{height:100%;font-family:'Nunito',system-ui,sans-serif;background:#fff;color:#111;overflow:hidden}
-#app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+html,body{font-family:'Nunito',system-ui,sans-serif;background:#fff;color:#111;margin:0;padding:0}
+#app{display:flex;flex-direction:column;min-height:100vh}
 
 /* ── HEADER ── */
-#header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#fff;border-bottom:1px solid #e8e8e8;flex-shrink:0}
+#header{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:#fff;border-bottom:1px solid #e8e8e8;position:sticky;top:0;z-index:10}
 #header h1{font-size:17px;font-weight:800;letter-spacing:.5px;color:#111}
 #score-badge{background:linear-gradient(135deg,#5AABB0,#3D8F95);color:#fff;font-weight:900;font-size:15px;padding:5px 16px;border-radius:20px}
 #level-badge{background:#f0f0f0;color:#555;font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px}
 
 /* ── CONFIG PANEL ── */
-#config{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0;padding:0;background:#fff;overflow-y:scroll;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+#config{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:0;padding-bottom:32px;background:#fff}
 
 /* Hero */
 #hero{width:100%;padding:24px 0 8px;display:flex;justify-content:center;flex-shrink:0;background:#fff}
@@ -41,11 +41,11 @@ input[type=range]{width:100%;accent-color:#5AABB0;height:6px}
 #start-btn:active{transform:scale(0.97)}
 
 /* ── GAME SCREEN ── */
-#game{flex:1;display:none;flex-direction:column;position:relative}
+#game{display:none;flex-direction:column;position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;background:#fff}
 
 /* DISPLAY ZONE */
-#display-zone{flex:1;position:relative;overflow:hidden;background:#fff;border-bottom:1px solid #e8e8e8}
-.letter-token{position:absolute;font-size:24px;font-weight:700;color:#111;transform:translate(-50%,-50%);transition:opacity .15s;user-select:none;letter-spacing:1px;white-space:nowrap}
+#display-zone{flex:1;position:relative;overflow:hidden;background:#fff;border-bottom:1px solid #e8e8e8;min-height:0}
+.letter-token{position:absolute;font-size:24px;font-weight:700;color:#111;transform:translate(-50%,-50%);user-select:none;letter-spacing:1px;white-space:nowrap}
 .letter-token.highlight{color:#111;font-weight:900}
 .letter-token.img-mode{font-size:32px;letter-spacing:4px}
 
@@ -53,8 +53,9 @@ input[type=range]{width:100%;accent-color:#5AABB0;height:6px}
 #flash{position:absolute;inset:0;background:#5AABB0;opacity:0;pointer-events:none;transition:opacity .1s}
 
 /* STATUS BAR */
-#status-bar{padding:10px 20px;background:#f5f5f5;border-top:1px solid #e8e8e8;border-bottom:1px solid #e8e8e8;display:flex;align-items:center;gap:12px;min-height:44px}
+#status-bar{padding:8px 16px;background:#f5f5f5;border-top:1px solid #e8e8e8;border-bottom:1px solid #e8e8e8;display:flex;align-items:center;gap:10px;min-height:44px;flex-wrap:wrap}
 #status-msg{font-size:15px;font-weight:700;flex:1;color:#333}
+#flash-timer{font-size:13px;font-weight:900;color:#5AABB0;white-space:nowrap;font-family:monospace;background:#EBF7F8;padding:2px 8px;border-radius:8px}
 #status-msg.ok{color:#16a34a}
 #status-msg.err{color:#dc2626}
 #status-msg.info{color:#888}
@@ -250,6 +251,7 @@ body.device-tablet #countdown{font-size:110px}
     <div id="flash"></div>
     <div id="countdown" style="display:none"></div>
   </div>
+  <div id="timer-bar" style="text-align:center;padding:4px 16px;background:#EBF7F8;border-top:1px solid #C8E9EB;font-size:14px;font-weight:900;color:#3D8F95;font-family:monospace;min-height:26px"></div>
   <div id="status-bar">
     <span id="status-msg" class="info">Prêt…</span>
     <div id="attempt-dots"></div>
@@ -349,6 +351,7 @@ function nextRound(){
   typed=[];
   attempts=0;
   target=pickChars(nb);
+
   updateAttemptDots();
   setStatus('','info');
   showCountdown(()=>showStimuli());
@@ -384,10 +387,11 @@ function showStimuli(){
   el.style.left=x+'px';
   el.style.top=y+'px';
   zone.appendChild(el);
-  const flash=document.getElementById('flash');
-  flash.style.opacity='0.08';
-  setTimeout(()=>flash.style.opacity='0',120);
+  const _t0=performance.now();
   setTimeout(()=>{
+    const _ms=Math.round(performance.now()-_t0);
+    const _tb=document.getElementById('timer-bar');
+    if(_tb) _tb.textContent='⏱ Flash mesuré : '+_ms+' ms';
     zone.querySelectorAll('.letter-token').forEach(e=>e.remove());
     phase='input';
     typed=[];
@@ -483,7 +487,14 @@ function reshowTarget(cb){
   el.style.left=x+'px';
   el.style.top=y+'px';
   zone.appendChild(el);
-  setTimeout(()=>{zone.querySelectorAll('.letter-token').forEach(e=>e.remove());cb();}, dur);
+  const _r0=performance.now();
+  setTimeout(()=>{
+    const _rms=Math.round(performance.now()-_r0);
+    const _tb=document.getElementById('timer-bar');
+    if(_tb) _tb.textContent='⏱ Flash mesuré : '+_rms+' ms';
+    zone.querySelectorAll('.letter-token').forEach(e=>e.remove());
+    cb();
+  }, dur);
 }
 
 function pointsForRound(){
